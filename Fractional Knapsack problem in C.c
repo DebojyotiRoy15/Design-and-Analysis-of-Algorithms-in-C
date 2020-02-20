@@ -11,11 +11,17 @@ void swap(float *a, float *b)
     *b = temp;
 }
 
+struct knap{
+    float weight;
+    float profit;
+    float pw;
+    int num;
+}
+
 int main()
 {
-    float profit[3], weight[3], temp;
-    float pw[3];
-    int prof, m, wt, rem, sumwt=0,i,j,n;
+    struct knap list[5];
+    int sumwt = 0, n, i,j,m=50;
     float sumpr = 0;
     fp = fopen("fractionalknapsack.c", "r");
     if (fp!=NULL)
@@ -25,7 +31,8 @@ int main()
            {
                 for(i=0;i<n;i++)
                 {
-                        fscanf(fp, "%f %f ", &profit[i], &weight[i]); 
+                        list[i].num = i+1;
+                        fscanf(fp, "%f %f ", &list[i].profit, &list[i].weight); 
                 }
            }
     }
@@ -36,33 +43,37 @@ int main()
     }
     for(i=0;i<n;i++)
             pw[i] = (profit[i]/weight[i]);
+    int tempo;
     for(i=0;i<n-1;i++)
         for(j=0;j<n-1-i;j++)
     {
-        if(pw[j]<pw[j+1])
+        if(list[j].pw<list[j+1].pw)
         {
-            swap(&pw[j], &pw[j+1]);
-            swap(&profit[j], &profit[j+1]);
-            swap(&weight[j], &weight[j+1]);
+            swap(&list[j].pw, &list[j+1].pw);
+            swap(&list[j].profit, &list[j+1].profit);
+            swap(&list[j].weight, &list[j+1].weight);
+            tempo = list[j].num;
+            list[j].num = list[j+1].num;
+            list[j+1].num = tempo;
         }
     }
-    printf("\n Enter max weight: \n");
-    scanf("%d", &m);
     int max;
     max = m;
     i=0;
     while(sumwt < max)
     {
-        if(weight[i]<m)
+        if(list[i].weight<m)
         {
-            sumpr = sumpr + profit[i];
-            sumwt = sumwt + weight[i];
-            m = m - weight[i];
+            sumpr = sumpr + list[i].profit;
+            sumwt = sumwt + list[i].weight;
+            m = m - list[i].weight;
+            printf("%d Element taken in whole fraction. \n", list[i].num);
         }
-        else if(weight[i]>m)
+        else if(list[i].weight>m)
         {
             sumwt = sumwt + m;
-            sumpr = sumpr + pw[i]*m;
+            sumpr = sumpr + (list[i].pw)*m;
+            printf("%d Element taken in fraction %f ", list[i].num, (list[i].pw)*m);
         }
         i++;
 
